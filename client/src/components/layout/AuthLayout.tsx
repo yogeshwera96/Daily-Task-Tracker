@@ -29,7 +29,7 @@ export const AuthLayout: React.FC = () => {
 
         <div className="flex items-center gap-2 relative z-10">
           <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-600/25">
-            ImaginetVentures
+            AI
           </div>
           <span className="font-bold text-slate-200 tracking-wide">Daily Task Tracker</span>
         </div>
