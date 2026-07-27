@@ -1,0 +1,26 @@
+{
+  "name": "ai-daily-task-tracker",
+  "version": "1.0.0",
+  "description": "AI Daily Task Tracker & Automatic EOD Reporting System",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "build": "concurrently \"npm run build:server\" \"npm run build:client\"",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:seed": "cd server && npx prisma db seed",
+    "db:studio": "cd server && npx prisma studio",
+    "lint": "concurrently \"cd server && npm run lint\" \"cd client && npm run lint\"",
+    "test": "concurrently \"cd server && npm test\" \"cd client && npm test\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,0 +1,350 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================
+// ENUMS
+// ========================
+
+enum Role {
+  ADMIN
+  MANAGER
+  DEVELOPER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+  ON_HOLD
+  TESTING
+  REVIEW
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  AUTO_GENERATED
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
+  ON_HOLD
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  SUCCESS
+  ERROR
+  REMINDER
+}
+
+enum SettingCategory {
+  AI
+  SMTP
+  REMINDER
+  GENERAL
+}
+
+// ========================
+// MODELS
+// ========================
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  firstName       String
+  lastName        String
+  role            Role      @default(DEVELOPER)
+  avatar          String?
+  phone           String?
+  designation     String?
+  isActive        Boolean   @default(true)
+  emailVerified   Boolean   @default(false)
+  verifyToken     String?
+  resetToken      String?
+  resetTokenExpiry DateTime?
+  lastLogin       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  departmentId    String?
+  department      Department?     @relation(fields: [departmentId], references: [id])
+  managerId       String?
+  manager         User?           @relation("ManagerDevelopers", fields: [managerId], references: [id])
+  developers      User[]          @relation("ManagerDevelopers")
+
+  tasks           Task[]
+  eodReports      EodReport[]     @relation("UserReports")
+  reviewedReports EodReport[]     @relation("ReviewerReports")
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  refreshTokens   RefreshToken[]
+  aiLogs          AiLog[]
+  projectAssignments ProjectAssignment[]
+  managedDepartments Department[]  @relation("DepartmentManager")
+  managedProjects    Project[]     @relation("ProjectManager")
+
+  @@index([email])
+  @@index([role])
+  @@index([departmentId])
+  @@index([managerId])
+  @@map("users")
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  managerId   String?
+  manager     User?    @relation("DepartmentManager", fields: [managerId], references: [id])
+  users       User[]
+  projects    Project[]
+
+  @@map("departments")
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  description String?       @db.Text
+  status      ProjectStatus @default(ACTIVE)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  managerId    String?
+  manager      User?         @relation("ProjectManager", fields: [managerId], references: [id])
+  departmentId String?
+  department   Department?   @relation(fields: [departmentId], references: [id])
+  
+  tasks        Task[]
+  assignments  ProjectAssignment[]
+
+  @@index([managerId])
+  @@index([departmentId])
+  @@map("projects")
+}
+
+model ProjectAssignment {
+  id        String   @id @default(uuid())
+  userId    String
+  projectId String
+  role      String   @default("DEVELOPER")
+  joinedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("project_assignments")
+}
+
+model Task {
+  id              String       @id @default(uuid())
+  title           String
+  description     String?      @db.Text
+  priority        TaskPriority @default(MEDIUM)
+  status          TaskStatus   @default(TODO)
+  category        String?
+  module          String?
+  estimatedHours  Float?
+  actualHours     Float?
+  assignedDate    DateTime     @default(now())
+  completionDate  DateTime?
+  dueDate         DateTime?
+  remarks         String?      @db.Text
+  tags            String?
+  dependencies    String?
+  sortOrder       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id])
+
+  attachments TaskAttachment[]
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedDate])
+  @@map("tasks")
+}
+
+model TaskAttachment {
+  id        String   @id @default(uuid())
+  fileName  String
+  filePath  String
+  fileType  String
+  fileSize  Int
+  createdAt DateTime @default(now())
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("task_attachments")
+}
+
+model EodReport {
+  id              String       @id @default(uuid())
+  date            DateTime     @db.Date
+  content         String       @db.LongText
+  rawTaskData     String?      @db.LongText
+  aiGenerated     Boolean      @default(false)
+  status          ReportStatus @default(DRAFT)
+  tomorrowPlan    String?      @db.Text
+  completedTasks  Int          @default(0)
+  pendingTasks    Int          @default(0)
+  blockedTasks    Int          @default(0)
+  totalHours      Float        @default(0)
+  managerComment  String?      @db.Text
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  emailSentAt     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  userId     String
+  user       User   @relation("UserReports", fields: [userId], references: [id], onDelete: Cascade)
+  reviewerId String?
+  reviewer   User?  @relation("ReviewerReports", fields: [reviewerId], references: [id])
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@index([status])
+  @@map("eod_reports")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  title     String
+  message   String           @db.Text
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  @db.Text
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Setting {
+  id       String          @id @default(uuid())
+  key      String          @unique
+  value    String          @db.Text
+  label    String?
+  category SettingCategory @default(GENERAL)
+
+  @@index([category])
+  @@map("settings")
+}
+
+model Holiday {
+  id          String   @id @default(uuid())
+  name        String
+  date        DateTime @db.Date
+  isRecurring Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+  @@map("holidays")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique @db.VarChar(500)
+  expiresAt DateTime
+  isRevoked Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model AiLog {
+  id        String   @id @default(uuid())
+  action    String
+  prompt    String   @db.LongText
+  response  String   @db.LongText
+  tokens    Int?
+  model     String?
+  duration  Int?
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("ai_logs")
+}
+
+model EmailLog {
+  id        String   @id @default(uuid())
+  to        String
+  subject   String
+  status    String
+  error     String?  @db.Text
+  sentAt    DateTime @default(now())
+
+  @@index([to])
+  @@index([sentAt])
+  @@map("email_logs")
+}
