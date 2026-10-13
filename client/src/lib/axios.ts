@@ -8,8 +8,12 @@ export const setAccessToken = (token: string | null) => {
 
 export const getAccessToken = () => accessTokenMemory;
 
+const apiBase = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
+  : '/api';
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: apiBase,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -62,7 +66,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post('/api/auth/refresh-token', {}, { withCredentials: true });
+        const response = await axios.post(`${apiBase}/auth/refresh-token`, {}, { withCredentials: true });
         const { accessToken } = response.data;
 
         setAccessToken(accessToken);

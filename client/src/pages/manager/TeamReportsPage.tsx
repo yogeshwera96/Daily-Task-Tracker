@@ -6,11 +6,10 @@ import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Select from '../../components/ui/Select';
-import Input from '../../components/ui/Input';
 import Modal from '../../components/ui/Modal';
 import Table from '../../components/ui/Table';
 import toast from 'react-hot-toast';
-import { Check, X, FileText, Send } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 
 export const TeamReportsPage: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<any>(null);

@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Plus, Trash2, Calendar } from 'lucide-react';
+import { Trash2, Calendar } from 'lucide-react';
 
 const holidaySchema = z.object({
   name: z.string().min(1, 'Holiday name is required'),
@@ -21,7 +21,6 @@ const holidaySchema = z.object({
 type HolidayFormData = z.infer<typeof holidaySchema>;
 
 export const HolidayPage: React.FC = () => {
-  const [isAdding, setIsAdding] = useState(false);
 
   const holidaysQuery = useQuery({
     queryKey: ['admin', 'holidays'],
@@ -42,7 +41,6 @@ export const HolidayPage: React.FC = () => {
     try {
       await api.post('/admin/holidays', data);
       toast.success('Holiday added successfully!');
-      setIsAdding(false);
       reset();
       holidaysQuery.refetch();
     } catch (err) {

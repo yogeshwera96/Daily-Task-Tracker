@@ -32,7 +32,7 @@ export const DeveloperDashboard: React.FC = () => {
     );
   }
 
-  const { taskStats = {}, recentReports = [], todayTasks = [], weeklyProductivity = [] } = dashboardData || {};
+  const { taskStats = {}, todayTasks = [], weeklyProductivity = [] } = dashboardData || {};
 
   const statsCards = [
     {

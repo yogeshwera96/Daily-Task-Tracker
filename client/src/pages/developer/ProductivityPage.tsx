@@ -2,9 +2,8 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
-import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Award, Briefcase, Zap, ShieldAlert } from 'lucide-react';
+import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Award, Zap, ShieldAlert } from 'lucide-react';
 
 export const ProductivityPage: React.FC = () => {
   const { data: dashboardData, isLoading } = useQuery({

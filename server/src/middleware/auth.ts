@@ -4,7 +4,12 @@ import { config } from '../config';
 import prisma from '../config/database';
 import { Role } from '@prisma/client';
 
-export interface AuthRequest extends Request {
+export interface AuthRequest<
+  P = Record<string, string>,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = any
+> extends Request<P, ResBody, ReqBody, ReqQuery> {
   user?: {
     id: string;
     email: string;

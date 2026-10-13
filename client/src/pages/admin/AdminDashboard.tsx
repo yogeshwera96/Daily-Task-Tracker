@@ -23,8 +23,6 @@ export const AdminDashboard: React.FC = () => {
     totalManagers = 0,
     totalProjects = 0,
     totalDepartments = 0,
-    todayReports = 0,
-    aiUsage = 0,
     recentLogs = []
   } = dashboardData || {};
 

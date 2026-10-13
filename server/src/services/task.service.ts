@@ -130,7 +130,7 @@ export class TaskService {
     return task;
   }
 
-  static async list(userId: string, userRole: string, filters: TaskFilterInput) {
+  static async list(userId: string, userRole: string, filters: Partial<TaskFilterInput>) {
     const page = parseInt(filters.page || '1');
     const limit = parseInt(filters.limit || '20');
     const skip = (page - 1) * limit;

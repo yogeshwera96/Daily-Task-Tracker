@@ -135,7 +135,6 @@ export const ManagerTasksPage: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
@@ -389,8 +388,8 @@ export const ManagerTasksPage: React.FC = () => {
               <div className="flex flex-col gap-1.5 min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h4 className="text-sm font-semibold text-slate-100 truncate">{task.title}</h4>
-                  <Badge variant={PRIORITY_COLORS[task.priority] ?? 'default'}>{task.priority}</Badge>
-                  <Badge variant={STATUS_COLORS[task.status] ?? 'default'}>{task.status}</Badge>
+                  <Badge variant={PRIORITY_COLORS[task.priority] ?? 'neutral'}>{task.priority}</Badge>
+                  <Badge variant={STATUS_COLORS[task.status] ?? 'neutral'}>{task.status}</Badge>
                 </div>
                 {task.description && (
                   <p className="text-xs text-slate-400 truncate">{task.description}</p>

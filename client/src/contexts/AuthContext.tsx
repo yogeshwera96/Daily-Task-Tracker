@@ -8,6 +8,7 @@ interface User {
   lastName: string;
   role: 'ADMIN' | 'MANAGER' | 'DEVELOPER';
   avatar?: string;
+  phone?: string;
   designation?: string;
   department?: { id: string; name: string };
 }

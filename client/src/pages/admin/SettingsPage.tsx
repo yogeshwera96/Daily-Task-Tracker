@@ -5,7 +5,7 @@ import Card from '../../components/ui/Card';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import toast from 'react-hot-toast';
-import { Settings, Save } from 'lucide-react';
+import { Settings } from 'lucide-react';
 
 export const SettingsPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
@@ -134,7 +134,7 @@ export const SettingsPage: React.FC = () => {
                   onChange={(e) => handleInputChange('working_hours', e.target.value)}
                 />
               </div>
-              <Button variant="secondary" onClick={() => handleSave('working_hours')}>Save</Button>
+              <Button variant="secondary" loading={saving} onClick={() => handleSave('working_hours')}>Save</Button>
             </div>
 
             <div className="flex flex-col sm:flex-row items-end gap-3">
@@ -145,7 +145,7 @@ export const SettingsPage: React.FC = () => {
                   onChange={(e) => handleInputChange('smtp_host', e.target.value)}
                 />
               </div>
-              <Button variant="secondary" onClick={() => handleSave('smtp_host')}>Save</Button>
+              <Button variant="secondary" loading={saving} onClick={() => handleSave('smtp_host')}>Save</Button>
             </div>
           </div>
         </Card>

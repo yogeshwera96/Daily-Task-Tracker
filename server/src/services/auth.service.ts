@@ -247,7 +247,7 @@ export class AuthService {
     return jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn as string }
+      { expiresIn: config.jwt.expiresIn as any }
     );
   }
 

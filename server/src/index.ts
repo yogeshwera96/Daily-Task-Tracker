@@ -2,6 +2,8 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import fs from 'fs';
 import { rateLimit } from 'express-rate-limit';
 import { config } from './config';
 import logger from './config/logger';
@@ -51,6 +53,25 @@ app.use('/api', apiRoutes);
 
 // File uploads serving
 app.use('/uploads', express.static(config.upload.dir));
+
+// Static frontend serving for production / unified deployment
+const clientDistCandidates = [
+  path.resolve(__dirname, '../../client/dist'),
+  path.resolve(process.cwd(), '../client/dist'),
+  path.resolve(process.cwd(), 'client/dist'),
+];
+const clientDist = clientDistCandidates.find((dir) => fs.existsSync(dir));
+
+if (clientDist) {
+  logger.info(`Serving static client files from ${clientDist}`);
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads') || req.path === '/health') {
+      return next();
+    }
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // Error routing handlers
 app.use(notFoundHandler);

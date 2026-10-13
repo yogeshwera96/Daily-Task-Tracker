@@ -4,7 +4,7 @@ import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import EmptyState from '../../components/ui/EmptyState';
-import { FileSpreadsheet, Sparkles, Send, Check } from 'lucide-react';
+import { FileSpreadsheet, Sparkles, Send } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const EodReportPage: React.FC = () => {

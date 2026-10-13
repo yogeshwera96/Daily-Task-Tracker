@@ -2,7 +2,6 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
 import { Users, FileCheck, AlertTriangle, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +25,6 @@ export const ManagerDashboard: React.FC = () => {
     projects = 0,
     todaySubmitted = 0,
     todayPending = 0,
-    lateReports = 0,
     developers = [],
     recentReports = []
   } = dashboardData || {};

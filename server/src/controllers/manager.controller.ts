@@ -67,7 +67,7 @@ export class ManagerController {
           completedTasks,
           pendingTasks,
           blockedTasks,
-          totalHours: totalHoursAgg._sum.actualHours || 0
+          totalHours: totalHoursAgg._sum?.actualHours || 0
         }
       });
     } catch (error) {

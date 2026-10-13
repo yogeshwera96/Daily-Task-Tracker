@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
-import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -12,7 +11,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Plus, Briefcase, Edit2 } from 'lucide-react';
+import { Plus, Edit2 } from 'lucide-react';
 
 const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),

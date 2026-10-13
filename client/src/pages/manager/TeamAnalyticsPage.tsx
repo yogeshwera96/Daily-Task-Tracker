@@ -2,7 +2,6 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import Card from '../../components/ui/Card';
-import Badge from '../../components/ui/Badge';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Users, FileCheck, ShieldAlert, Award } from 'lucide-react';
 

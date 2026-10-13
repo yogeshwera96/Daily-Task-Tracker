@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Plus, User, Search, Edit2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Plus, Search, Edit2, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const userSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
