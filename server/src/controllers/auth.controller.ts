@@ -1,6 +1,8 @@
 import { Response, NextFunction } from 'express';
 import { AuthService } from '../services/auth.service';
+import { EmailService } from '../services/email.service';
 import { AuthRequest } from '../middleware/auth';
+import { config } from '../config';
 import logger from '../config/logger';
 
 export class AuthController {
@@ -87,7 +89,20 @@ export class AuthController {
 
   static async forgotPassword(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      await AuthService.forgotPassword(req.body.email);
+      const result = await AuthService.forgotPassword(req.body.email);
+      if (result) {
+        const baseUrl = (req.headers.origin as string) || config.app.url;
+        const resetUrl = `${baseUrl}/reset-password?token=${result.resetToken}`;
+        try {
+          await EmailService.sendPasswordReset(
+            result.user.email,
+            `${result.user.firstName} ${result.user.lastName}`,
+            resetUrl
+          );
+        } catch (emailErr: any) {
+          logger.error(`Failed to send password reset email: ${emailErr.message}`);
+        }
+      }
       // Always return success to prevent email enumeration
       res.json({ message: 'If an account exists, a password reset email has been sent.' });
     } catch (error) {
